@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iframe을 이용한 유튜브 갤러리</title>
+<style>
+#wrapper{
+    width: 600px;
+    height: 500px;
+    background-color: yellow;
+    margin: auto;
+}
+#thumb{
+    width: 100%;
+    height: 100px;
+    background-color: greenyellow;
+}
+#detail{
+    width: 100%;
+    height: 400px;
+    background-color: orange;
+}
+</style>
+<script>
+var thumb;
+var detail;
+var url=[
+"https://www.youtube.com/embed/LuCg8HhoKjE",
+"https://www.youtube.com/embed/LuCg8HhoKjE",
+"https://www.youtube.com/embed/LuCg8HhoKjE",
+"https://www.youtube.com/embed/LuCg8HhoKjE",
+"https://www.youtube.com/embed/LuCg8HhoKjE"
+];
+addEventListener("load",function(){
+    thumb = document.getElementById("thumb");
+    detail = document.getElementById("detail");
+    createMovie();
+});
+//유튜브 영상 썸네일 생성 및 큰화면 생성
+function createMovie(){
+    
+    for(var i=0; i<5; i++){
+        var iframe = document.createElement("iframe");
+        iframe.src=url[i];
+        iframe.width=100+"px";
+        iframe.height=100+"px";
+        iframe.addEventListener("mouseover",function(){
+            showDetail(this.src);
+        })
+        thumb.appendChild(iframe);
+    }
+}
+function showDetail(src){
+    var myFrame =document.getElementsByname("myFrame");
+    myFrame.src =src;
+}
+</script>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="thumb"></div>
+        <div id="detail"><iframe id="myFrame" width="600px" height="400px"></iframe></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+#mask{
+    width: 200px;
+    height: 200px;
+    background-color: yellow;
+    margin: auto;
+    margin-top: 100px;
+    position: relative; /*자식때문에 포지션*/
+    overflow: hidden;
+}
+</style>
+<script src="../js/lib.js"></script>
+<script>
+var mask;
+var container;
+//배열을 사용하는 이유? 이미지명이 규칙이없기때문에
+var imgArray=[
+    "../images/food1.jpg",
+    "../images/food2.jpg",
+    "../images/food3.jpg",
+    "../images/food4.jpg",
+    "../images/food5.jpg",
+    "../images/food6.jpg",
+    "../images/forest.jpg",
+    "../images/i1.png",
+    "../images/i2.png",
+    "../images/i3.png",
+    "../images/i4.png",
+    "../images/i5.png",
+    "../images/i6.png",
+    "../images/i7.png",
+    "../images/i8.png",
+    "../images/i9.png",
+    "../images/i10.png"
+];
+// var arr =new Array();
+var posX=[0,200,400,600];
+var posY=[0,200,400,600];
+var a=0.1;
+targetX=0;
+targetY=0;
+addEventListener("load",function(){
+    mask = document.getElementById("mask");
+    container = document.createElement("div");
+    container.style.width=800+"px";
+    container.style.height=800+"px";
+    container.style.position="absolute";
+    container.style.left=0+"px";
+    container.style.top=0+"px";
+    container.style.background="blue";
+    mask.appendChild(container); //마스크에 컨테이너 부착!!
+    createImg();
+    setInterval("move()",10);
+    setInterval("getTarget()",1700);
+});
+//16개의 이미지를 생성하여, container에 부착하자!!
+var count =0;
+var img;
+function createImg(){ 
+    for(var i=0; i<4; i++){
+        for(var j=0; j<4; j++){
+            img = document.createElement("img");
+            img.src= imgArray[count++];
+            //자동으로 움직일때 그 좌표가 명시되어야 target지점이 생기므로
+            img.style.position="absolute";
+            img.style.left=(j*200)+"px";
+            img.style.top=(i*200)+"px";
+            img.style.width=200+"px";
+            img.style.height=200+"px";
+            container.appendChild(img);
+            // arr.push(img);
+        }
+    }
+}
+//컨테이너가 사용할 목표지점을 일정한 시간마다 구해주자!
+function getTarget(){
+    // 평상시엔 위치값이 자유로웠으나 ,지금은 정해져있다 0,-200,-400,-600
+   // 컨테이너가 x,y축 0~800사이의 값을 이동하게한다
+   targetX =-1*posX[ getRandom(0,posX.length-1)];
+   targetY =-1*posY[ getRandom(0,posY.length-1)];
+}
+function move(){
+    container.style.left = parseFloat(container.style.left)+a*(targetX-parseFloat(container.style.left))+"px";
+    container.style.top = parseFloat(container.style.top)+a*(targetY-parseFloat(container.style.top))+"px";
+}
+</script>
+</head>
+<body>
+    <div id="mask"></div>
+</body>
+</html>

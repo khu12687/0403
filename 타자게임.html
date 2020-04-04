@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>베네치아 타자게임</title>
+<style>
+#wrapper{
+    width: 1000px;
+    height: 600px;
+    margin: auto;
+    overflow: hidden; /*자식때문에..*/
+}
+/*자식요소를 띄울경우 반드시 부모에는 overflow속성이 명시되어야한다*/
+#dashBoard{
+    width: 200px;
+    height: 100%;
+    float: left;
+    text-align: center;
+    padding-top: 10px;
+}
+#container{
+    width: 800px;
+    height: 100%;
+    background-image : url("../images/bgbg.jpg");
+    background-size: 100% 600px;
+    float: left;
+    position: relative;
+}
+button{
+    width: 95%;
+    background-color: #4CAF50;
+    color: #FFFFFF;
+    padding: 12px;
+}
+input[type='text']{
+    width: 95%;
+    height: 45px;
+    margin-top: 5px;
+    font-size: 20pt;
+}
+#hpArea{
+    width:100%;
+    height: 180px;
+    background-color: honeydew;
+    position: relative;
+}
+#scoreArea{
+    width: 100%;
+    font-size: 40pt;
+    font-weight: bold;
+}
+</style>
+<script src="../js/lib.js"></script><script>
+var hpArea;
+var scoreArea;
+var container;
+var step=0;
+var hpArray=new Array(9);
+var t_input;
+var hitCount=0;
+var score=0;
+var span;
+var flag=false; //단어가 내려올지 여부를  결정하는 변수!!
+//사용자가 입력한 텍스트와 게임에 등장할 단어는 반복문으로
+//비교 되어야 하므로, 배열화 되어있어야 한다!!
+var word=[
+    "참","많은","시간이","흘러","가고","넌","어떻게","사는","지참","궁금해"
+];
+var word2=[
+"날","걱정","하는","사람","들","에겐","다","잊었단","거짓말","하는"
+];
+var word3=[
+"내가","참","미운","날","아름다운","이별은","세상에","없다지만","그때","내가"
+];
+var wordArray=new Array(word.length); // 지역변수인 span을 보관할 배열 //배열의수많큼확보
+var wordArray2=new Array(word.length);
+addEventListener("load",function(){
+    hpArea = document.getElementById("hpArea");
+    scoreArea = document.getElementById("scoreArea");
+    container = document.getElementById("container");
+    t_input = document.getElementById("t_input");
+
+    t_input.addEventListener("keyup",function(e){
+        if(e.keyCode==13){
+            wordCheck();
+            wordCheck2();
+        }
+    });
+    createHP();
+    getScore(); //점수출력
+    createWord(); //단어 생성하기!!
+    setInterval("move()",1000); 
+    setInterval("move2()",100); 
+});
+//에너지 박스 만들기
+function createHP(){
+    var n=0;
+    for(var i=0; i<3; i++){
+        for(var j=0; j<3; j++){
+            span = document.createElement("span");
+            span.style.display="inline-block"; //width, height 가능하게됨
+            span.style.width=50+"px";
+            span.style.height=50+"px";
+            span.style.border="1px solid black";
+            span.style.background="red"; 
+            span.style.position="absolute";
+            span.style.left=24+(i*51)+"px";
+            span.style.top=15+(j*51)+"px";
+            hpArea.appendChild(span);
+            hpArray[n++]=span;
+        }
+    }
+}
+function getScore(){
+    scoreArea.innerHTML=score+"점";
+}
+function createWord(){
+    for(var i=0; i<word.length; i++){
+        span = document.createElement("span");
+        span.innerHTML=word[i];
+        span.style.fontWeight="bold";
+        span.style.position="absolute";
+        span.style.left=50+(i*70)+"px";
+        span.style.top=-getRandom(0,100)+"px";
+        span.style.color="#FFFFFF";
+        container.appendChild(span);
+        //배열에 보관해놓기~~
+        wordArray[i]=span;
+    }
+}
+//앱력한 단어와 배열로 존재하는 span의 텍스트를 비교하자!!
+function wordCheck(){
+    for(var i=0; i<wordArray.length; i++){
+        if(t_input.value == wordArray[i].innerHTML){
+            // alert("맞았네요!!");
+            // span이 container 에서 제거되어야 하고,스코어 추가!!
+            container.removeChild(wordArray[i]);
+            score+=10;
+            getScore(); //화면처리 함수 호출!
+            if(score==100){
+                goNext();
+            }
+        }
+    }
+    t_input.value="";
+}
+function wordCheck2(){
+    for(var i=0; i<wordArray2.length; i++){
+        if(t_input.value == wordArray2[i].innerHTML){
+            // alert("맞았네요!!");
+            // span이 container 에서 제거되어야 하고,스코어 추가!!
+            container.removeChild(wordArray2[i]);
+            score+=10;
+            getScore(); //화면처리 함수 호출!
+            // if(score==100){
+            //     goNext();
+            // }
+        }
+    }
+    t_input.value="";
+}
+
+//단어들을 일정시간 간격으로 내려오게 하자!!(Y축 증가)
+function move(){
+    if(flag){
+        for(var i=0; i<word.length; i++){
+            var y= parseInt(wordArray[i].style.top);
+            wordArray[i].style.top=y+10+"px";
+            if(y>=550){
+               setHp();
+           }  
+        }    
+    }
+}
+function move2(){
+    if(flag){
+        for(var i=0; i<word2.length; i++){
+            var y= parseInt(wordArray2[i].style.top);
+            wordArray2[i].style.top=y+10+"px";
+            if(y>=550){
+               setHp();
+           }  
+        }    
+    }
+}
+function setHp(){
+    hpArray[hitCount++].style.background="yellow";
+    if (hitCount>=hpArray.length) {
+        flag=fasle;
+    }
+}
+//단어를 진행할지 여부 처리와, start | pause
+function setFlag(){
+    flag=!flag;
+    var bt = document.querySelector("button");
+    
+    bt.innerText= flag ? "Pause" : "Start";
+}
+function goNext(){
+    for(var i=0; i<word2.length; i++){
+        span = document.createElement("span");
+        span.innerHTML=word2[i];
+        span.style.fontWeight="bold";
+        span.style.position="absolute";
+        span.style.left=50+(i*70)+"px";
+        span.style.top=-getRandom(0,100)+"px";
+        span.style.color="#FFFFFF";
+        container.appendChild(span);
+        //배열에 보관해놓기~~
+        wordArray2[i]=span;
+    }
+}
+</script>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="dashBoard">
+            <button onclick="setFlag()">Start</button>
+            <input type="text" id="t_input"/>
+            <div id="hpArea"></div>
+            <div id="scoreArea"></div>
+        </div>
+        <div id="container"></div>
+    </div>
+</body>
+</html>
